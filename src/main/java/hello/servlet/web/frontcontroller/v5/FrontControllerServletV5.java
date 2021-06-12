@@ -2,11 +2,9 @@ package hello.servlet.web.frontcontroller.v5;
 
 import hello.servlet.web.frontcontroller.ModelView;
 import hello.servlet.web.frontcontroller.MyView;
-import hello.servlet.web.frontcontroller.v3.ControllerV3;
 import hello.servlet.web.frontcontroller.v3.controller.MemberFormControllerV3;
 import hello.servlet.web.frontcontroller.v3.controller.MemberListControllerV3;
 import hello.servlet.web.frontcontroller.v3.controller.MemberSaveControllerV3;
-import hello.servlet.web.frontcontroller.v4.ControllerV4;
 import hello.servlet.web.frontcontroller.v4.controller.MemberFormControllerV4;
 import hello.servlet.web.frontcontroller.v4.controller.MemberListControllerV4;
 import hello.servlet.web.frontcontroller.v4.controller.MemberSaveControllerV4;
@@ -24,6 +22,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * v5: 유연한 컨트롤러
+ * 다양한 컨트롤러를 사용해서 개발할 수 있다.
+ * 어댑터 도입 - 어댑터를 추가해서 프레임워크를 유연하고 확장성 있게 설계
+ */
 @WebServlet(name = "frontControllerServletV5", urlPatterns = "/front-controller/v5/*")
 public class FrontControllerServletV5 extends HttpServlet {
 
@@ -58,6 +61,7 @@ public class FrontControllerServletV5 extends HttpServlet {
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("FrontControllerServletV5.service");
 
+        // request 에 적합한 컨트롤러를 반환
         Object handler = getHandler(request);
 
         if (handler == null) {
@@ -65,10 +69,14 @@ public class FrontControllerServletV5 extends HttpServlet {
             return;
         }
 
+        // controller 에 적합한 어댑터를 반환
         MyHandlerAdapter adapter = getHandlerAdapter(handler);
 
+        // 어댑터를 통한 컨트롤러 실행
+        // (필요한 파라미터를 입력, 로직을 수행하여 ModelView를 반환)
         ModelView mv = adapter.handle(request, response, handler);
 
+        // 뷰 로직
         String viewName = mv.getViewName(); // 논리이름 new-form
         MyView view = viewResolver(viewName); // 물리이름 조립, 반환
 
