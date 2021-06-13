@@ -23,12 +23,21 @@ import javax.servlet.http.HttpServletResponse;
  * HandleMapping 에서 OldController 라는 핸들러를 반환
  * HandlerAdapter 에서 Controller 인터페이스의 support 를 통해 adapter 를 반환하고
  * 이 adapter 를 통해 OldController 라는 핸들러를 실행.
+ *
+ * ViewResolver
+ * BeanNameViewResolver : 'new-form' 이라는 이름의 스프링 빈으로 등록된 뷰를 찾는다.
+ * InternalResourceViewResolver : InternalResourceView 를 반환한다. (여기에 해당)
+ * InternalResourceView : JSP 처럼 포워드 forward() 를 호출해서 처리할 수 있는 경우에 사용
+ * view.render() 가 호출되고 InternalResourceView 는 forward() 를 사용해서 JSP 를 실행
+ *
+ * ref : 다른 뷰는 실제 뷰를 렌더링하지만, JSP의 경우 forward() 를 통해서 해당 JSP 로 이동해야
+ * 렌더링이 된다. JSP 를 제외한 나머지 뷰 템플릿들은 forward() 과정 없이 바로 렌더링 된다.
  */
 @Component("/springmvc/old-controller") // spring bean의 이름을 urlpattern으로 맞춘 것.
 public class OldController implements Controller {
     @Override
     public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
         System.out.println("OldController.handleRequest");
-        return null;
+        return new ModelAndView("new-form");
     }
 }
